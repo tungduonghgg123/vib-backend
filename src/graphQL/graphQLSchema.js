@@ -1,17 +1,4 @@
-var { graphql, buildSchema } = require("graphql");
-var express = require("express");
-var { graphqlHTTP } = require("express-graphql");
-var contactByCategories = require("./fakeData");
-// console.log(JSON.stringify(contactByCategories));
-console.log(contactByCategories);
-const user = {
-  realName: "tungduong",
-  accountNumber: "123456789",
-  balance: 9999999999,
-  categories: contactByCategories,
-  transactions: []
-};
-const schema = buildSchema(`
+module.exports = `
     type Query {
         user: User!
     }
@@ -85,40 +72,4 @@ const schema = buildSchema(`
         WITHOUT_CATEGORY
         NO
     }
-`);
-const root = {
-  user: () => {
-    return user;
-  },
-  makeTransaction: ({ input, save }) => {
-    var id = require("crypto")
-      .randomBytes(10)
-      .toString("hex");
-    const transaction = { ...input };
-    transaction.category = {
-      name: input.category.name,
-      iconName: input.category.iconName,
-      subCategories: [
-        {
-          name: input.category.subCategoryName,
-          iconName: input.category.subCategoryIconName
-        }
-      ]
-    };
-    transaction.id = id;
-    user.transactions.push(transaction);
-    return transaction;
-  }
-};
-
-var app = express();
-app.use(
-  "/graphql",
-  graphqlHTTP({
-    schema,
-    rootValue: root,
-    graphiql: true
-  })
-);
-app.listen(4000);
-console.log("Running a GraphQL API server at http://localhost:4000/graphql");
+`;
