@@ -72,7 +72,7 @@ const schema = buildSchema(`
         category: CategoryInput
         toBudget: Budget
         receiver: ContactInput
-        date: String!
+        date: String
     }
     enum Budget {
         VIB
@@ -88,20 +88,26 @@ const schema = buildSchema(`
 `);
 const root = {
   user: () => {
-    return {
-      realName: "tungduong",
-      accountNumber: "123456789",
-      balance: 9999999999,
-      categories: contactByCategories,
-      transactions: []
-    };
+    return user;
   },
   makeTransaction: ({ input, save }) => {
     var id = require("crypto")
       .randomBytes(10)
       .toString("hex");
-    user.transactions.push({ id, ...input });
-    return input;
+    const transaction = { ...input };
+    transaction.category = {
+      name: input.category.name,
+      iconName: input.category.iconName,
+      subCategories: [
+        {
+          name: input.category.subCategoryName,
+          iconName: input.category.subCategoryIconName
+        }
+      ]
+    };
+    transaction.id = id;
+    user.transactions.push(transaction);
+    return transaction;
   }
 };
 
