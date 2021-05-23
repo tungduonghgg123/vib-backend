@@ -1,6 +1,7 @@
 var { User, Transaction, Quiz } = require("./class");
 var { findOne, insert, update } = require("../mongoDB/index");
 var ObjectId = require("mongodb").ObjectId;
+const { budget } = require("./constants");
 
 const getUserId = request => {
   if (!request.headers.userid)
@@ -12,6 +13,7 @@ const updateExpensePlan = async (id, transaction) => {
   const quiz = (await findOne({ _id: ObjectId(id) })).quizs[0];
   checkForCategoryInExpense(id, transaction, quiz.monthlyExpense);
   checkForCategoryInExpense(id, transaction, quiz.limitExpense, "limitExpense");
+  updateRemainingBudget(id, transaction, quiz);
 };
 const checkForCategoryInExpense = (
   id,
@@ -38,6 +40,18 @@ const checkForCategoryInExpense = (
       }
     });
   }
+};
+const updateRemainingBudget = async (id, transaction, quiz) => {
+  update(
+    {
+      _id: ObjectId(id)
+    },
+    {
+      $inc: {
+        ["quizs.0." + budget[transaction.from]]: -transaction.amount
+      }
+    }
+  );
 };
 module.exports = {
   user: async (_, request) => {
