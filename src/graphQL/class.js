@@ -66,10 +66,11 @@ class Expense {
 
 class Quiz {
   constructor({
-    vibBudget,
-    otherBankBudget,
-    cashBudget,
-    eWalletBudget,
+    vibBudget = 0,
+    otherBankBudget = 0,
+    cashBudget = 0,
+    eWalletBudget = 0,
+    monthlyTotalBudget = 0,
     monthlyExpense,
     limitExpense,
     date
@@ -81,6 +82,9 @@ class Quiz {
     this.cashBudget = cashBudget;
     this.eWalletBudget = eWalletBudget;
     this.date = date || new Date();
+    this.monthlyTotalBudget =
+      monthlyTotalBudget ||
+      vibBudget + otherBankBudget + cashBudget + eWalletBudget;
   }
   monthlyBudget({ input }) {
     switch (input) {

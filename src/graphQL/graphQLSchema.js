@@ -83,6 +83,7 @@ module.exports = `
     type Quiz {
         date: String!
         monthlyBudget(input: Budget): Int
+        monthlyTotalBudget: Int
         monthlyExpense: [Expense]
         limitExpense: [Expense]
     }
