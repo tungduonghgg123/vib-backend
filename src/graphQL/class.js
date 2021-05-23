@@ -5,7 +5,8 @@ class User {
     accountNumber,
     balance,
     categories,
-    transactions
+    transactions,
+    quizs
   }) {
     this.id = _id;
     this.realName = realName;
@@ -13,6 +14,7 @@ class User {
     this.balance = balance;
     this.categories = categories;
     this.transactions = transactions;
+    this.quizs = quizs && quizs.map(quiz => new Quiz(quiz));
   }
 }
 class Transaction {
@@ -33,7 +35,7 @@ class Transaction {
     this.toBudget = toBudget;
     this.receiver = receiver;
     this.category = new Category(category);
-    this.date = date ? date : new Date();
+    this.date = date || new Date();
   }
 }
 class Category {
@@ -61,34 +63,27 @@ class Quiz {
     cashBudget,
     eWalletBudget,
     monthlyExpense,
-    limitExpense
+    limitExpense,
+    date
   }) {
     this.monthlyExpense = monthlyExpense.map(expense => new Expense(expense));
     this.limitExpense = limitExpense.map(expense => new Expense(expense));
-    this.monthlyBudgetData = {
-      vibBudget,
-      otherBankBudget,
-      cashBudget,
-      eWalletBudget
-    };
-    this.date = new Date();
+    this.vibBudget = vibBudget;
+    this.otherBankBudget = otherBankBudget;
+    this.cashBudget = cashBudget;
+    this.eWalletBudget = eWalletBudget;
+    this.date = date || new Date();
   }
   monthlyBudget({ input }) {
-    const {
-      vibBudget,
-      otherBankBudget,
-      cashBudget,
-      eWalletBudget
-    } = this.monthlyBudgetData;
     switch (input) {
       case "VIB":
-        return vibBudget;
+        return this.vibBudget;
       case "OTHER_BANK":
-        return otherBankBudget;
+        return this.otherBankBudget;
       case "E_WALLET":
-        return eWalletBudget;
+        return this.eWalletBudget;
       case "CASH":
-        return cashBudget;
+        return this.cashBudget;
       default:
         throw new Error("budget error");
     }
