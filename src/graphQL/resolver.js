@@ -1,5 +1,4 @@
-var contactByCategories = require("../../fakeData");
-var { User, Transaction } = require("./class");
+var { User, Transaction, Quiz } = require("./class");
 var { findOne, insert, update } = require("../mongoDB/index");
 var ObjectId = require("mongodb").ObjectId;
 
@@ -15,7 +14,6 @@ module.exports = {
     return new User(result);
   },
   makeTransaction: ({ input, save }, request) => {
-    getUserId(request);
     // construct a Transaction
     const transaction = new Transaction(input);
     // Insert a transaction to User(userId)'s transactions
@@ -35,5 +33,19 @@ module.exports = {
     const result = await insert(input);
     // If success return User
     return new User(result);
+  },
+  submitQuiz: async ({ input }, request) => {
+    const id = getUserId(request);
+    const quiz = new Quiz(input);
+    update(
+      {
+        _id: ObjectId(id)
+      },
+      {
+        $push: { quizs: quiz }
+      }
+    );
+
+    return quiz;
   }
 };
