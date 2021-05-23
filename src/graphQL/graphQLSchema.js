@@ -97,7 +97,7 @@ module.exports = `
     type Expense {
         category: Category
         maxAmount: Int,
-        currentAmount: Int = 0
+        currentAmount: Int 
     }
     input ExpenseInput {
         category: CategoryInput

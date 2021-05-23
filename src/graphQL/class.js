@@ -50,6 +50,7 @@ class Expense {
   constructor({ category, maxAmount }) {
     this.category = new Category(category);
     this.maxAmount = maxAmount;
+    this.currentAmount = 0;
   }
 }
 
