@@ -39,20 +39,28 @@ class Transaction {
   }
 }
 class Category {
-  constructor({ name, iconName, subCategoryName, subCategoryIconName }) {
+  constructor({
+    name,
+    iconName,
+    subCategoryName,
+    subCategoryIconName,
+    subCategories
+  }) {
     this.name = name;
     this.iconName = iconName;
-    this.subCategories = {
-      name: subCategoryName,
-      iconName: subCategoryIconName
-    };
+    this.subCategories = subCategories || [
+      {
+        name: subCategoryName,
+        iconName: subCategoryIconName
+      }
+    ];
   }
 }
 class Expense {
-  constructor({ category, maxAmount }) {
+  constructor({ category, maxAmount, currentAmount }) {
     this.category = new Category(category);
     this.maxAmount = maxAmount;
-    this.currentAmount = 0;
+    this.currentAmount = currentAmount || 0;
   }
 }
 
