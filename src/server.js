@@ -8,8 +8,13 @@ var graphQLSchema = require("./graphQL/graphQLSchema");
 var graphQLResolver = require("./graphQL/resolver");
 
 const schema = buildSchema(graphQLSchema);
+const loggingMiddleware = (req, res, next) => {
+  // This will magically send req to resolvers's context argument
+  next();
+};
 
 var app = express();
+app.use(loggingMiddleware);
 app.use(
   "/graphql",
   graphqlHTTP({
