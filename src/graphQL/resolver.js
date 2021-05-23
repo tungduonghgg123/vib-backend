@@ -1,28 +1,28 @@
 var contactByCategories = require("../../fakeData");
 var { User, Transaction } = require("./class");
-var { insert, update } = require("../mongoDB/index");
+var { findOne, insert, update } = require("../mongoDB/index");
 var ObjectId = require("mongodb").ObjectId;
-const user = {
-  realName: "tungduong",
-  accountNumber: "123456789",
-  balance: 9999999999,
-  categories: contactByCategories,
-  transactions: []
+
+const getUserId = request => {
+  if (!request.headers.userid)
+    throw new Error("userid is needed in the header");
+  return request.headers.userid;
 };
 module.exports = {
-  user: (_, request) => {
-    console.log(request.headers.userid);
-    return user;
+  user: async (_, request) => {
+    const id = getUserId(request);
+    const result = await findOne({ _id: ObjectId(id) });
+    return new User(result);
   },
   makeTransaction: ({ input, save }, request) => {
+    getUserId(request);
     // construct a Transaction
     const transaction = new Transaction(input);
     // Insert a transaction to User(userId)'s transactions
-    const userId = request.headers.userid;
-    if (!userId) throw "userid is needed in the header";
+    const id = getUserId(request);
     update(
       {
-        _id: ObjectId(userId)
+        _id: ObjectId(id)
       },
       {
         $push: { transactions: transaction }

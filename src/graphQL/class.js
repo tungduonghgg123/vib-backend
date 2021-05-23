@@ -1,9 +1,18 @@
 class User {
-  constructor({ _id, realName, accountNumber, balance }) {
+  constructor({
+    _id,
+    realName,
+    accountNumber,
+    balance,
+    categories,
+    transactions
+  }) {
     this.id = _id;
     this.realName = realName;
     this.accountNumber = accountNumber;
     this.balance = balance;
+    this.categories = categories;
+    this.transactions = transactions;
   }
 }
 class Transaction {
@@ -17,7 +26,6 @@ class Transaction {
     receiver,
     date
   }) {
-    console.log(category);
     this.from = from;
     this.amount = amount;
     this.message = message;
