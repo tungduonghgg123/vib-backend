@@ -14,10 +14,8 @@ module.exports = {
     return new User(result);
   },
   makeTransaction: ({ input, save }, request) => {
-    // construct a Transaction
-    const transaction = new Transaction(input);
-    // Insert a transaction to User(userId)'s transactions
     const id = getUserId(request);
+    const transaction = new Transaction(input);
     update(
       {
         _id: ObjectId(id)
@@ -29,12 +27,11 @@ module.exports = {
     return transaction;
   },
   registerUser: async ({ input }) => {
-    // Write new user to database
     const result = await insert(input);
-    // If success return User
     return new User(result);
   },
   submitQuiz: async ({ input }, request) => {
+    // TODO: Submit a quiz once a month
     const id = getUserId(request);
     const quiz = new Quiz(input);
     update(
