@@ -4,13 +4,20 @@ module.exports = `
     }
     type Mutation {
         makeTransaction(input: TransactionInput!, save: SaveReciever = NO): Transaction
+        registerUser (input: UserInput!): User
     }
     type User {
+        id: ID!
         realName: String!
         accountNumber: String!
         balance: Int!
         categories: [Category]
         transactions: [Transaction]
+    }
+    input UserInput {
+        realName: String!
+        accountNumber: String!
+        balance: Int!
     }
     type Category {
         name: String!

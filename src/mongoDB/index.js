@@ -2,16 +2,16 @@ var MongoClient = require("mongodb").MongoClient;
 var { databaseName, collectionName, url } = require("./constants");
 
 const insert = input => {
-  MongoClient.connect(url, function(err, db) {
-    if (err) throw err;
-    var dbo = db.db(databaseName);
-    dbo.collection(collectionName).insertOne(input, function(err, res) {
+  return new Promise((resolve, reject) => {
+    MongoClient.connect(url, function(err, db) {
       if (err) throw err;
-      console.log("1 document inserted");
-      db.close();
+      var dbo = db.db(databaseName);
+      dbo.collection(collectionName).insertOne(input, function(err, res) {
+        if (err) throw err;
+        resolve(res.ops[0]);
+        db.close();
+      });
     });
-
-    db.close();
   });
 };
 
@@ -86,17 +86,6 @@ const update = (query, value, option) => {
   });
 };
 
-update(
-  { address: "gan nha Duong" },
-  {
-    $set: {
-      country: "VN"
-    },
-    $inc: {
-      revenue: 10
-    }
-  },
-  {
-    upsert: true
-  }
-);
+module.exports = {
+  insert
+};

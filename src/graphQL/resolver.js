@@ -1,4 +1,6 @@
 var contactByCategories = require("../../fakeData");
+var { User } = require("./class");
+var { insert } = require("../mongoDB/index");
 const user = {
   realName: "tungduong",
   accountNumber: "123456789",
@@ -28,5 +30,11 @@ module.exports = {
     transaction.id = id;
     user.transactions.push(transaction);
     return transaction;
+  },
+  registerUser: async ({ input }) => {
+    // Write new user to database
+    const result = await insert(input);
+    // If success return User
+    return new User(result);
   }
 };
