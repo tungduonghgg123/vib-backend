@@ -65,14 +65,15 @@ class Quiz {
   }) {
     this.monthlyExpense = monthlyExpense.map(expense => new Expense(expense));
     this.limitExpense = limitExpense.map(expense => new Expense(expense));
-    this.monthlyBudgetData = [
+    this.monthlyBudgetData = {
       vibBudget,
       otherBankBudget,
       cashBudget,
       eWalletBudget
-    ];
+    };
+    this.date = new Date();
   }
-  monthlyBudget(input) {
+  monthlyBudget({ input }) {
     const {
       vibBudget,
       otherBankBudget,
