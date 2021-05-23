@@ -48,7 +48,6 @@ module.exports = `
         bank: String!
     }
     type Transaction {
-        id: ID!
         from: Budget!
         amount: Int!
         message: String

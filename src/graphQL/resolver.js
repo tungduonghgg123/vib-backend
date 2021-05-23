@@ -1,6 +1,7 @@
 var contactByCategories = require("../../fakeData");
-var { User } = require("./class");
-var { insert } = require("../mongoDB/index");
+var { User, Transaction } = require("./class");
+var { insert, update } = require("../mongoDB/index");
+var ObjectId = require("mongodb").ObjectId;
 const user = {
   realName: "tungduong",
   accountNumber: "123456789",
@@ -9,26 +10,24 @@ const user = {
   transactions: []
 };
 module.exports = {
-  user: () => {
+  user: (_, request) => {
+    console.log(request.headers.userid);
     return user;
   },
-  makeTransaction: ({ input, save }) => {
-    var id = require("crypto")
-      .randomBytes(10)
-      .toString("hex");
-    const transaction = { ...input };
-    transaction.category = {
-      name: input.category.name,
-      iconName: input.category.iconName,
-      subCategories: [
-        {
-          name: input.category.subCategoryName,
-          iconName: input.category.subCategoryIconName
-        }
-      ]
-    };
-    transaction.id = id;
-    user.transactions.push(transaction);
+  makeTransaction: ({ input, save }, request) => {
+    // construct a Transaction
+    const transaction = new Transaction(input);
+    // Insert a transaction to User(userId)'s transactions
+    const userId = request.headers.userid;
+    if (!userId) throw "userid is needed in the header";
+    update(
+      {
+        _id: ObjectId(userId)
+      },
+      {
+        $push: { transactions: transaction }
+      }
+    );
     return transaction;
   },
   registerUser: async ({ input }) => {

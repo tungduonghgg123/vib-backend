@@ -1,4 +1,5 @@
 var MongoClient = require("mongodb").MongoClient;
+var ObjectId = require("mongodb").ObjectId;
 var { databaseName, collectionName, url } = require("./constants");
 
 const insert = input => {
@@ -15,13 +16,13 @@ const insert = input => {
   });
 };
 
-const findOne = () => {
+const findOne = query => {
   MongoClient.connect(url, function(err, db) {
     if (err) throw err;
     var dbo = db.db(databaseName);
-    dbo.collection(collectionName).findOne({}, function(err, result) {
+    dbo.collection(collectionName).findOne(query, function(err, result) {
       if (err) throw err;
-      console.log(result.name);
+      console.log(result);
       db.close();
     });
   });
@@ -87,5 +88,6 @@ const update = (query, value, option) => {
 };
 
 module.exports = {
-  insert
+  insert,
+  update
 };

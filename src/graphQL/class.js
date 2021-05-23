@@ -6,6 +6,38 @@ class User {
     this.balance = balance;
   }
 }
+class Transaction {
+  constructor({
+    from,
+    amount,
+    message,
+    note,
+    category,
+    toBudget,
+    receiver,
+    date
+  }) {
+    console.log(category);
+    this.from = from;
+    this.amount = amount;
+    this.message = message;
+    this.note = note;
+    this.toBudget = toBudget;
+    this.receiver = receiver;
+    this.category = {
+      name: category.name,
+      iconName: category.iconName,
+      subCategories: [
+        {
+          name: category.subCategoryName,
+          iconName: category.subCategoryIconName
+        }
+      ]
+    };
+    this.date = date ? date : new Date();
+  }
+}
 module.exports = {
-  User
+  User,
+  Transaction
 };
