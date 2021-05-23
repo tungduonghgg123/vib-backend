@@ -5,6 +5,7 @@ module.exports = `
     type Mutation {
         makeTransaction(input: TransactionInput!, save: SaveReciever = NO): Transaction
         registerUser (input: UserInput!): User
+        submitQuiz (input: QuizInput): Quiz
     }
     type User {
         id: ID!
@@ -13,6 +14,7 @@ module.exports = `
         balance: Int!
         categories: [Category]
         transactions: [Transaction]
+        quizs: [Quiz]
     }
     input UserInput {
         realName: String!
@@ -77,5 +79,28 @@ module.exports = `
         WITH_CATEGORY
         WITHOUT_CATEGORY
         NO
+    }
+    type Quiz {
+        date: String!
+        monthlyBudget(input: Budget): Int
+        monthlyExpense: [Expense]
+        limitExpense: [Expense]
+    }
+    input QuizInput {
+        vibBudget: Int
+        otherBankBudget: Int
+        cashBudget: Int
+        eWalletBudget: Int
+        monthlyExpense: [ExpenseInput]
+        limitExpense: [ExpenseInput]
+    }
+    type Expense {
+        category: Category
+        maxAmount: Int,
+        currentAmount: Int = 0
+    }
+    input ExpenseInput {
+        category: CategoryInput
+        maxAmount: Int,
     }
 `;
