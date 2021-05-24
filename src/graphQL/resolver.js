@@ -1,6 +1,7 @@
-var { User, Transaction, Quiz } = require("./class");
+var { User, Transaction, Quiz, Category } = require("./class");
 var { findOne, insert, update } = require("../mongoDB/index");
 var ObjectId = require("mongodb").ObjectId;
+var { insertNewContactToCategories } = require("../mongoDB/helper");
 const { budget } = require("./constants");
 
 const getUserId = request => {
@@ -59,7 +60,7 @@ module.exports = {
     const result = await findOne({ _id: ObjectId(id) });
     return new User(result);
   },
-  makeTransaction: ({ input, save }, request) => {
+  makeTransaction: async ({ input, save }, request) => {
     const id = getUserId(request);
     const transaction = new Transaction(input);
     update(
@@ -73,7 +74,46 @@ module.exports = {
     // TODO: make this to O(1) instead of O(n)
     // based on category, loop through expenseList's category and increase if matches
     // TODO: this can be run independently after finished a transaction.
-    updateExpensePlan(id, transaction);
+    // updateExpensePlan(id, transaction);
+
+    // get user's categories
+    const categories = (await findOne({ _id: ObjectId(id) })).categories || [];
+    let newCategories = undefined;
+    // Save contact
+    if (save === "WITH_CATEGORY") {
+      // check for existence of category
+      if (transaction.category) {
+        // insert
+        newCategories = insertNewContactToCategories(
+          transaction.category,
+          categories
+        );
+      } else {
+        throw new Error("a category is required");
+      }
+    }
+    if (save === "WITHOUT_CATEGORY") {
+      // insert
+      newCategories = insertNewContactToCategories(
+        new Category(
+          {
+            name: "cá nhân",
+            iconName: "person",
+            subCategoryIconName: "undefined",
+            subCategoryName: "undefined"
+          },
+          transaction.receiver
+        ),
+        categories
+      );
+    }
+    // update database
+    update(
+      { _id: ObjectId(id) },
+      {
+        $set: { categories: newCategories }
+      }
+    );
     return transaction;
   },
   registerUser: async ({ input }) => {

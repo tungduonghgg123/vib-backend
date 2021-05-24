@@ -34,24 +34,22 @@ class Transaction {
     this.note = note;
     this.toBudget = toBudget;
     this.receiver = receiver;
-    this.category = new Category(category);
+    this.category = new Category(category, receiver);
     this.date = date || new Date();
   }
 }
 class Category {
-  constructor({
-    name,
-    iconName,
-    subCategoryName,
-    subCategoryIconName,
-    subCategories
-  }) {
+  constructor(
+    { name, iconName, subCategoryName, subCategoryIconName, subCategories },
+    receiver
+  ) {
     this.name = name;
     this.iconName = iconName;
     this.subCategories = subCategories || [
       {
         name: subCategoryName,
-        iconName: subCategoryIconName
+        iconName: subCategoryIconName,
+        contacts: receiver ? [receiver] : []
       }
     ];
   }
@@ -104,5 +102,6 @@ class Quiz {
 module.exports = {
   User,
   Transaction,
-  Quiz
+  Quiz,
+  Category
 };
