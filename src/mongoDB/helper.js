@@ -80,4 +80,48 @@ const updateRemainingBudget = async (id, transaction) => {
     }
   );
 };
-module.exports = { insertNewContactToCategories, updateExpensePlan };
+const saveReciever = async (id, transaction, save) => {
+  // get user's categories
+  const categories = (await findOne({ _id: ObjectId(id) })).categories || [];
+  let newCategories = undefined;
+  // Save contact
+  if (save === "WITH_CATEGORY") {
+    // check for existence of category
+    if (transaction.category) {
+      // insert
+      newCategories = insertNewContactToCategories(
+        transaction.category,
+        categories
+      );
+    } else {
+      throw new Error("a category is required");
+    }
+  }
+  if (save === "WITHOUT_CATEGORY") {
+    // insert
+    newCategories = insertNewContactToCategories(
+      new Category(
+        {
+          name: "cá nhân",
+          iconName: "person",
+          subCategoryIconName: "undefined",
+          subCategoryName: "undefined"
+        },
+        transaction.receiver
+      ),
+      categories
+    );
+  }
+  // update database
+  update(
+    { _id: ObjectId(id) },
+    {
+      $set: { categories: newCategories }
+    }
+  );
+};
+module.exports = {
+  insertNewContactToCategories,
+  updateExpensePlan,
+  saveReciever
+};

@@ -1,10 +1,7 @@
 var { User, Transaction, Quiz, Category } = require("./class");
 var { findOne, insert, update } = require("../mongoDB/index");
 var ObjectId = require("mongodb").ObjectId;
-var {
-  insertNewContactToCategories,
-  updateExpensePlan
-} = require("../mongoDB/helper");
+var { updateExpensePlan, saveReciever } = require("../mongoDB/helper");
 
 const getUserId = request => {
   if (!request.headers.userid)
@@ -31,47 +28,9 @@ module.exports = {
     );
     // TODO: make this to O(1) instead of O(n)
     // based on category, loop through expenseList's category and increase if matches
-    // TODO: this can be run independently after finished a transaction.
+    // TODO: these can be run independently after finished a transaction.
     updateExpensePlan(id, transaction);
-
-    // get user's categories
-    const categories = (await findOne({ _id: ObjectId(id) })).categories || [];
-    let newCategories = undefined;
-    // Save contact
-    if (save === "WITH_CATEGORY") {
-      // check for existence of category
-      if (transaction.category) {
-        // insert
-        newCategories = insertNewContactToCategories(
-          transaction.category,
-          categories
-        );
-      } else {
-        throw new Error("a category is required");
-      }
-    }
-    if (save === "WITHOUT_CATEGORY") {
-      // insert
-      newCategories = insertNewContactToCategories(
-        new Category(
-          {
-            name: "cá nhân",
-            iconName: "person",
-            subCategoryIconName: "undefined",
-            subCategoryName: "undefined"
-          },
-          transaction.receiver
-        ),
-        categories
-      );
-    }
-    // update database
-    update(
-      { _id: ObjectId(id) },
-      {
-        $set: { categories: newCategories }
-      }
-    );
+    if (save !== "NO") saveReciever(id, transaction, save);
     return transaction;
   },
   registerUser: async ({ input }) => {
